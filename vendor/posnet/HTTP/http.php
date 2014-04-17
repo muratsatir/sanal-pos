@@ -409,8 +409,6 @@
                         curl_setopt($this->connection, CURLOPT_SSLCERT, $arguments["SSLCertificateFile"]);
                     if (IsSet($arguments["SSLCertificatePassword"]))
                         curl_setopt($this->connection, CURLOPT_SSLCERTPASSWD, $arguments["SSLCertificatePassword"]);
-
-                    curl_setopt($this->connection, CURLOPT_INTERFACE, '188.138.79.161');
                 }
             } else {
                 $error = "";

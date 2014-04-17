@@ -84,7 +84,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface {
      * @param string $siparisID
      * @return void
      */
-    public function siparisAyarlari($tutar, $siparisID, $taksit)
+    public function siparisAyarlari($tutar, $siparisID, $taksit,$extra)
     {
         $this->tutar     = $tutar;
         $this->siparisID = $siparisID;
@@ -110,8 +110,8 @@ class Pos extends BasePos implements \SanalPos\PosInterface {
     public function odeme()
     {
         // Kontrol yapmadan deneme yapan olabilir
-        if ( ! $this->dogrula())
-            throw new \InvalidArgumentException;
+       # if ( ! $this->dogrula())
+        #    throw new \InvalidArgumentException;
 
         // Bankaya post edilecek veriler
         $kur = 'YT';
@@ -121,7 +121,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface {
 
         // Son kullanma tarihi formatı
         $sktAy  = substr($this->sonKullanmaTarihi, 0, 2);
-        $sktYil = substr($this->sonKullanmaTarihi, 2, 2);
+        $sktYil = substr($this->sonKullanmaTarihi, 4, 2);
 
         $this->posnet->SetURL($this->host);
         $this->posnet->SetMid($this->musteriID);

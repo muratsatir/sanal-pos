@@ -23,7 +23,7 @@ interface PosInterface {
      * @param string $siparisID
      * @return void
      */
-    public function siparisAyarlari($miktar, $siparisID, $taksit);
+    public function siparisAyarlari($miktar, $siparisID, $taksit,$extra);
 
     /** 
      * Girilen kredi kartı gibi verilerin bankaya göndermeden önce doğrulaması
