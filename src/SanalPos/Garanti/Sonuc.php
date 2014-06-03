@@ -1,6 +1,6 @@
 <?php namespace SanalPos\Garanti;
 
-use SimpleXMLElement;
+use \SimpleXMLElement;
 
 /**
  * POSSonuc interfacei ile Yapı Kredi POS döngüleri 
@@ -18,7 +18,7 @@ class Sonuc implements \SanalPos\PosSonucInterface {
     public function __construct($xml)
     {
         $this->orijinalXml = $xml;
-         
+        $this->xml         = new \SimpleXMLElement($xml);
     }
 
     public function basariliMi()
@@ -30,8 +30,8 @@ class Sonuc implements \SanalPos\PosSonucInterface {
     {
         return array(
                 array(
-                    'kod'   => '',
-                    'mesaj' => ''
+                    'kod'   => $this->xml->Transaction->Response->Code[0] ,
+                    'mesaj' => $this->xml->Transaction->Response->ErrorMsg[0] 
                 )
             );
     }
