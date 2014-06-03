@@ -18,7 +18,7 @@ class Sonuc implements \SanalPos\PosSonucInterface {
     public function __construct($xml)
     {
         $this->orijinalXml = $xml;
-        $this->xml         = new SimpleXMLElement($xml);
+         
     }
 
     public function basariliMi()
