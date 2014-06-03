@@ -80,7 +80,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
      * @param string $siparisID
      * @return void
      */
-    public function siparisAyarlari($tutar, $siparisID, $taksit)
+    public function siparisAyarlari($tutar, $siparisID, $taksit,$extra)
     {
         $this->tutar     = $tutar;
         $this->siparisID = $siparisID;
