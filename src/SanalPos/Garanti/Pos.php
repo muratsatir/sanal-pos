@@ -143,8 +143,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface {
 
         $cevap = $this->xmlGonder($xml);
         
-        var_dump($xml);
-
+ 
         // Sonuç nesnesini oluştur
         return new Sonuc($cevap);
     }
