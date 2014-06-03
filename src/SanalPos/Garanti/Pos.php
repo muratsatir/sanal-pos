@@ -1,17 +1,20 @@
-<?php namespace SanalPos\Garanti;
+<?php
+
+namespace SanalPos\Garanti;
 
 use SanalPos\BasePos;
 
 /**
  * Garanti için 3D'siz sanal POS
  */
-class Pos extends BasePos implements \SanalPos\PosInterface  {
+class Pos extends BasePos implements \SanalPos\PosInterface {
+
     /**
      * POS bilgileri
      */
     private $adres = 'https://sanalposprov.garanti.com.tr/VPServlet';
 
-    /** 
+    /**
      * Banka bilgileri
      */
     protected $isyeri;
@@ -31,7 +34,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
     protected $sonKullanmaTarihi;
     protected $cvc;
 
-    /** 
+    /**
      * Sipariş bilgileri
      */
     protected $tutar;
@@ -49,12 +52,11 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
      * @param string $parola
      * @return void
      */
-    public function __construct($isyeri, $terminal, $kullanici, $parola, $environment = 'PROD')
-    {
-        $this->isyeri      = $isyeri;
-        $this->terminal    = $terminal;
-        $this->kullanici   = $kullanici;
-        $this->parola      = $parola;
+    public function __construct($isyeri, $terminal, $kullanici, $parola, $environment = 'PROD') {
+        $this->isyeri = $isyeri;
+        $this->terminal = $terminal;
+        $this->kullanici = $kullanici;
+        $this->parola = $parola;
         $this->environment = $environment;
     }
 
@@ -66,11 +68,10 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
      * @param string $cvc
      * @return void
      */
-    public function krediKartiAyarlari($kartNo, $sonKullanmaTarihi, $cvc)
-    {
-        $this->kartNo            = $kartNo;
+    public function krediKartiAyarlari($kartNo, $sonKullanmaTarihi, $cvc) {
+        $this->kartNo = $kartNo;
         $this->sonKullanmaTarihi = $sonKullanmaTarihi;
-        $this->cvc               = $cvc;
+        $this->cvc = $cvc;
     }
 
     /**
@@ -80,11 +81,10 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
      * @param string $siparisID
      * @return void
      */
-    public function siparisAyarlari($tutar, $siparisID, $taksit,$extra)
-    {
-        $this->tutar     = $tutar;
+    public function siparisAyarlari($tutar, $siparisID, $taksit, $extra) {
+        $this->tutar = $tutar;
         $this->siparisID = $siparisID;
-        $this->taksit    = $taksit;
+        $this->taksit = $taksit;
     }
 
     /**
@@ -92,20 +92,23 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
      *
      * @return PosSonucInterface
      */
-    public function odeme()
-    {
-      
+    public function odeme() {
+
         // Verileri garantiye uygun hale getir
-        $tutar  = $this->tutar * 100;
+        $tutar = $this->tutar * 100;
         $taksit = $this->taksit > 1 ? $this->taksit : '';
+
+
+        $sktAy = substr($this->sonKullanmaTarihi, 0, 2);
+        $sktYil = substr($this->sonKullanmaTarihi, 4, 2);
 
         // HASH
         $SecurityData = strtoupper(sha1($this->parola . str_pad($this->terminal, 9, '0', STR_PAD_LEFT)));
         $hash = strtoupper(sha1($this->siparisID . $this->terminal . $this->kartNo . $tutar . $SecurityData));
-        
-        $xml= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+
+        $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
         <GVPSRequest>
-        <Mode>TEST</Mode>
+        <Mode>PROD</Mode>
         <Version>v0.00</Version>
         <Terminal>
             <ProvUserID>PROVAUT</ProvUserID>
@@ -120,7 +123,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
         </Customer>
         <Card>
             <Number>{$this->kartNo}</Number>
-            <ExpireDate>{$this->sonKullanmaTarihi}</ExpireDate>
+            <ExpireDate>{$sktAy}{$sktYil}</ExpireDate>
             <CVV2>{$this->cvc}</CVV2>
         </Card>
         <Order>
@@ -137,8 +140,10 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
         </Transaction>
         </GVPSRequest>
         ";
-        
+
         $cevap = $this->xmlGonder($xml);
+        
+        var_dump($xml);
 
         // Sonuç nesnesini oluştur
         return new Sonuc($cevap);
@@ -150,8 +155,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
      * @param string $xml Gönderilecek xml
      * @return string $xml
      */
-    function xmlGonder($xml)
-    {
+    function xmlGonder($xml) {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->adres);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -161,7 +165,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         $cevap = curl_exec($ch);
         curl_close($ch);
-        
+
         return $cevap;
     }
 
