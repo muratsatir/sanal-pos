@@ -94,10 +94,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface  {
      */
     public function odeme()
     {
-        // Kontrol yapmadan deneme yapan olabilir
-        if ( ! $this->dogrula())
-            throw new \InvalidArgumentException;
-
+      
         // Verileri garantiye uygun hale getir
         $tutar  = $this->tutar * 100;
         $taksit = $this->taksit > 1 ? $this->taksit : '';
