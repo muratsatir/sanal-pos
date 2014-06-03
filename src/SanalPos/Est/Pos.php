@@ -76,9 +76,7 @@ class Pos extends BasePos implements \SanalPos\PosInterface {
      * @return PosSonucInterface
      */
     public function odeme() {
-        // Kontrol yapmadan deneme yapan olabilir
-        if (!$this->dogrula())
-
+  
 
         // Verileri EST'ye uyumlu hale getir
         $sktAy = substr($this->sonKullanmaTarihi, 0, 2);
