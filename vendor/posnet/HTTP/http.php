@@ -55,8 +55,8 @@
         /* private variables - DO NOT ACCESS */
 
         var $state = "Disconnected";
-        var $use_curl = 0;
-        var $use_openssl = 0;
+        var $use_curl = 1;
+        var $use_openssl = 1;
         var $connection = 0;
         var $content_length = 0;
         var $response = "";
@@ -392,7 +392,7 @@
                         
 	    if($this->use_openssl)
             {
-               $this->use_curl = 0;
+               $this->use_curl = 1;
                if ($this->debug)
                   $this->OutputDebug("OpenSSL will be used for connection");
             }
