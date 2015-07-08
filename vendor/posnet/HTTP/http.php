@@ -389,19 +389,30 @@
                 $host_port = $this->proxy_host_port;
             }
             $ssl = (strtolower($this->protocol) == "https" && strlen($this->proxy_host_name) == 0);
-            
-            if($this->use_openssl)
+                        
+	    if($this->use_openssl)
             {
-            		$this->use_curl = 0;
-            		if ($this->debug)
-                	$this->OutputDebug("OpenSSL will be used for secure connection");
+               $this->use_curl = 0;
+               if ($this->debug)
+                  $this->OutputDebug("OpenSSL will be used for connection");
             }
             else
             {
-                $this->use_curl = ($ssl && function_exists("curl_init"));
-            		if ($this->debug)
-                	$this->OutputDebug("CURL will be used for secure connection");
-            }   
+                $this->use_curl = function_exists("curl_init");
+            	
+		if ($this->debug) {
+		   if ($this->use_curl)
+		      $this->OutputDebug("CURL will be used for connection");
+		   else
+		      $this->OutputDebug("OpenSSL will be used for connection");
+		}
+            }
+
+	    if($ssl) {
+	        if ($this->debug)
+               	   $this->OutputDebug("Secure Connection !");
+ 	    }
+   
             if ($this->use_curl) {
                 $error = (($this->connection = curl_init($this->protocol."://".$this->host_name.($host_port == $default_port ? "" : ":".strval($host_port))."/")) ? "" : "Could not initialize a CURL session");
                 if (strlen($error) == 0) {
@@ -863,6 +874,7 @@
                 }
                 else
                     $request_body = $this->request_body;
+                curl_setopt($this->connection, CURLOPT_SSLVERSION, 3);
                 curl_setopt($this->connection, CURLOPT_HEADER, 1);
                 curl_setopt($this->connection, CURLOPT_RETURNTRANSFER, 1);
                 if ($this->data_timeout)
@@ -974,7 +986,8 @@
                     if(!preg_match("/HTTP\/1\.[1|0]\s(\d{3})/",$line,$matches))
                         return($this->SetError("3 it was received an unexpected HTTP response status"));
                     $this->response_status = $matches[1];
-                    $this->response_message = $matches[2];
+                    if (IsSet($matches[2]))
+                    	$this->response_message = $matches[2];
                 }
                 if ($line == "") {
                     if (strlen($this->response_status) == 0)
